@@ -36,6 +36,29 @@ app.config["DEBUG"] = True # cái này báo với ứng dụng rằng đang tron
 def homepage():
     return jsonify(["chào bạn"])
 
+# Tiến hành xử lý lấy dữ liệu từ người dùng cung cấp đơn gian dùng phương
+# thức `GET` và biến truyền vào là `name`
+
+@app.route('/chao', methods=['GET'])
+def chaohoi():
+    # Kiểm tra phương thức có phải là `GET` hay không ?
+    # nếu không thì chúng ta xuất câu thông báo không hỗ trợ
+    if request.method != 'GET':
+        return jsonify(['Phương thức không được hỗ trợ, chỉ chấp nhận phương thức `GET` mà thoai'])
+    # Ok đã là phương thức `GET` giờ chúng ta kiểm tra xem người ta có gửi 
+    # thông tin lên hay không
+    name = request.args.get('name', '').strip() # Phương thức `GET` thì chúng ta dùng `request.args` `POST` thì là `request.form`
+    if not name:
+        return jsonify(['Ôi không bạn chưa có nhập gì vào cho chúng tôi biết.'])
+    # Nào kiểm tra thử lệnh if else nhé
+    if name.lower() == "trang":
+        return jsonify(['Chào %s khùng :D' % name.title() ])
+    elif name.lower() == '=.=':
+        return jsonify(['Ahihi'])
+    return jsonify(['chào %s nhé' % name.title() ])
+
+# Gõ vào địa chỉ trình duyệt như sau `http://127.0.0.1:9090/chao?name=trang` :D
+
 # Nào bắt đầu chạy ứng dụng nhé
 
 if __name__ == "__main__":
