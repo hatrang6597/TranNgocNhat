@@ -224,3 +224,5 @@ dự án.
 Tất cả mọi lệnh cũng như cách sử dụng thì `git` đã tạo ra lệnh `git help`
 để chúng ta có thể tham khảo và sử dụng nó một cách rất chi tiết và cụ thể nhất
 
+Ngoài ra có thể tham khảo tài liệu ở [liên kết này](https://product.hubspot.com/blog/git-and-github-tutorial-for-beginners) nếu như không muốn
+học `git` một cách rườm rà.
