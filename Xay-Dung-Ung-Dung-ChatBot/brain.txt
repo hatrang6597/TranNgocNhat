@@ -1,0 +1,44 @@
+Trong truy hồi thông tin, tf–idf, TF*IDF, hay TFIDF, viết tắt từ cụm từ
+tiếng Anh: term frequency–inverse document frequency, là một thống kê số
+học nhằm phản ánh tầm quan trọng của một từ đối với một văn bản trong một
+tập hợp hay một ngữ liệu văn bản. tf–idf thường dùng dưới dạng là một trọng
+số trong tìm kiếm truy xuất thông tin, khai thác văn bản, và mô hình hóa
+người dùng.
+
+Giá trị tf–idf tăng tỉ lệ thuận với số lần xuất hiện của một từ trong tài
+liệu và được bù đắp bởi số lượng tài liệu trong kho ngữ liệu có chứa từ,
+giúp điều chỉnh thực tế là một số từ xuất hiện nói chung thường xuyên hơn.
+tf-idf là một trong những lược đồ (scheme) tính trọng số phổ biến nhất hiện
+nay. Một cuộc khảo sát được thực hiện vào năm 2015 cho thấy 83% các hệ thống
+khuyến nghị dựa trên văn bản (text-based recommender systems) trong các thư
+viện số sử dụng tf-idf.
+
+IDF có ứng dụng trong máy tìm kiếm. Ví dụ, khi người dùng gửi một truy vấn
+đến máy tìm kiếm, hệ thống cần biết từ nào là từ người dùng quan tâm nhất.
+Chẳng hạn: truy vấn của người dùng là "làm thế nào để sửa máy ủi". Sau khi
+tách từ, chúng ta sẽ có tập các từ: làm, thế nào, để, sửa, máy ủi. Trong
+các từ này, "máy ủi" sẽ có IDF cao nhất. Hệ thống sẽ lấy ra tất cả các văn
+bản có chứa từ máy ủi và sau đó mới thực hiện việc đánh giá và so sánh dựa
+trên toàn bộ câu truy vấn.
+
+Độ tương tự cosin là một cách đo độ tương tự (measure of similarity) giữa
+hai vectơ khác không của một không gian tích vô hướng. Độ tương tự này được
+định nghĩa bằng giá trị cosine của góc giữa hai vectơ, và cũng là tích vô
+hướng của cùng các vectơ đơn vị để cả hai đều có chiều dài 1. Giá trị cosine
+của 0° là 1, và bé hơn 1 với bất kỳ góc nào trong khoảng các radian (0, π].
+
+Độ tương tự cosin là một thẩm định có tính định hướng chứ không phải về độ
+lớn (to nhỏ): hai vectơ cùng hướng có độ tương tự cosin là 1, hai vectơ vuông
+góc nhau (hay có hướng 90°) có độ tương tự là 0, và hai vectơ đối nhau theo
+đường kính có độ tương tự (hay 180°) là -1. Độ tương tự cosin đặc biệt được
+sử dụng trong không gian dương với kết quả được giới hạn chặt chẽ trong biên
+độ [0,1]. Cái tên "độ tương tự cosin" bắt nguồn từ thuật ngữ "cosin có hướng":
+trong trường hợp này, các vectơ đơn vị có độ "tương tự" tối đa nếu chúng
+song song và "khác nhau" cực đại nếu chúng là trực giao (vuông góc). Điều
+này tương tự với cosin, có giá trị lớn nhất khi các phân đoạn tạo thành một
+góc bằng 0, và giá trị bằng 0 (không liên quan) khi các đoạn thẳng vuông góc.
+
+Độ tương tự có giá trị −1 có nghĩa là trái nghĩa hoàn toàn, với giá trị 1
+nghĩa là giống nhau hoàn toàn, với 0 có nghĩa là trực giao hay tương quan
+(decorrelation), trong khi các giá trị ở giữa biểu thị sự giống nhau hoặc
+không giống nhau ở mức trung gian.
