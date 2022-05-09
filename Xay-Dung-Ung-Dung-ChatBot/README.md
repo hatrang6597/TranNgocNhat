@@ -530,3 +530,104 @@ quan tới `python` hay `HTML` hoặc `CSS` để tiện cho việc hiểu nguy�
 đoạn mã có các đoạn chú thích để dễ hiểu hơn về công năng và nhiệm vụ của
 từng đoạn mã. Để hiểu rõ về cách lập trình mã này vui lòng xem chi tiết liên
 kết được đưa ra ở trên.
+
+## Xây dựng cổng nhận dữ liệu
+
+Ở phần này chúng ta sẽ tiếp tục chỉnh sửa tập tin `chatbot.py` trả về dữ
+liệu `JSON` cho mã nguồn `Javascript` tiếp nhận và xử lý thông tin.
+
+Cấu trúc `JSON` sẽ trả về có hai dạng như sau
+
+Nếu có lỗi chúng ta sẽ trả về
+
+```JSON
+{
+    "error":"Nội dung lỗi"
+}
+
+```
+
+Nếu như không có lỗi chúng ta sẽ trả về tin nhắn người dùng và trả lời của
+Chatbot như sau
+
+```JSON
+{
+    "message":"Tin nhắn người dùng",
+    "reply":"Nội dung trả lời lại"
+}
+
+```
+
+Nào chúng ta cùng bắt đầu xây dựng công này với địa chỉ là `/api` nội dung
+của tập tin `chatbot.py` sẽ như sau vì nội dung tin nhắn có thể sẽ dài vì
+thế chúng ta chỉ hạn chế cho người dùng gửi lên thông qua phương thức `HTTP
+POST` và dữ liệu gửi lên có tên là `text`
+
+```python
+# -*- coding: utf-8 -*-
+
+from flask import Flask
+from flask import render_template, request, jsonify
+
+app = Flask("app", template_folder="./")
+
+app.config["DEBUG"] = True
+app.config["JSON_AS_ASCII"] = False
+app.config["JSONIFY_PRETTYPRINT_REGULAR"] = False
+
+@app.route('/')
+def homepage():
+    return render_template('chatbot.html');
+
+@app.route('/api',methods=['POST'])
+def chatreply():
+    # Nếu gửi lên bằng JSON thì chúng ta sẽ lấy JSON
+    if request.content_type and "application/json" in request.content_type:
+        data = request.get_json()
+    else:
+        # Chúng ta sẽ lây thông qua form data
+        data = request.form
+    # Lấy nội dung người dùng gửi lên
+    text = data.get('text','').strip()
+    # Nếu như không có gì thì thông báo lỗi và thoát
+    if not text:
+        return jsonify({
+            "error":"Tôi không nghe bạn nói gì cả."
+        })
+    # Đơn giản ở phần này chúng ta gửi trả lại những gì người ta gửi lên
+    return jsonify({
+        "message":text,
+        "reply":text
+    })
+
+if __name__ == "__main__":
+    app.run('0.0.0.0', port=9090)
+
+```
+
+Như vậy là chúng ta đã hoàn thành việc tạo cổng nhận dữ liệu người dùng nhập
+vào cho Chatbot trong phần này chúng ta cần `import` thêm `request` để lấy
+dữ liệu được gửi lên và `jsonify` để trả về `JSON` cho người dùng.
+
+Vì với những ký tự `utf-8` thì mặc định `Flask` sẽ trả `JSON` sẽ mã hóa `utf-8`
+để trả nguyên vẹn thì chúng ta sẽ thêm hai dòng cấu hình này
+
+```python
+app.config["JSON_AS_ASCII"] = False
+app.config["JSONIFY_PRETTYPRINT_REGULAR"] = False
+
+```
+
+Lúc này chúng ta gửi dữ liệu là `Chào chatbot` thì trả về cho chúng ta sẽ
+như sau
+
+```JSON
+{
+    "message":"Chào chatbot",
+    "reply":"Chào chatbot"
+}
+
+```
+
+Như vậy là chúng ta đã hoàn thành xong bước này tiếp đến chúng ta sẽ xây dựng
+mã nguồn `Javascript` để gửi dữ liệu lên cổng này để có dữ liệu trả về.
