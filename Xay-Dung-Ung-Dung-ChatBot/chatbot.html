@@ -129,5 +129,44 @@ button {
             </p>
         </form>
     </div>
+    <script>
+    /* Gọi sự kiện khi trang đã tải xong */
+    document.addEventListener("DOMContentLoaded", function(e) {
+        /* Viết sự kiện nhấn nút */
+        document.querySelector('button[type="submit"]').addEventListener('click', function(e) {
+            e.preventDefault(); /* Dừng không cho submit lên */
+            /* Lấy dữ liệu người dùng nhập vào */
+            var message = document.querySelector('input[name="message"]').value.trim();
+            /* Kiểm tra xem có dữ liệu không */
+            if (message.length == 0) {
+                /* Nếu như không nhập gì thì không làm gì cả */
+                return false;
+            }
+            /* Lấy khung hội thoại */
+            var conversation = document.querySelector('#conversation');
+            /* Xóa nội dung người dùng nhập */
+            document.querySelector('input[name="message"]').value = '';
+            /* Tạo một thẻ div lưu tin nhắn */
+            var item = document.createElement('div');
+            item.className = 'item me'; /* Thêm class để cho CSS nhận diện */
+            item.innerHTML = '<p>'+message+'</p>'; /* Nhúng nội dung vào */
+            /* Đưa vào khung hội thoại */
+            conversation.appendChild(item);
+            /* Cuộn xuống tới tin nhắn */
+            conversation.scrollTop = conversation.scrollHeight;
+            /* Tạo một cái tự trả lời lại */
+            
+            /* Tạo một thẻ div lưu tin nhắn */
+            var item = document.createElement('div');
+            item.className = 'item'; /* Thêm class để cho CSS nhận diện */
+            item.innerHTML = '<p>Chatbot:'+message+'</p>'; /* Nhúng nội dung vào */
+            /* Đưa vào khung hội thoại */
+            conversation.appendChild(item);
+            /* Cuộn xuống tới tin nhắn */
+            conversation.scrollTop = conversation.scrollHeight;
+            return false; /* return false dừng không cho submit lên và ngược lại */
+        }, false);
+    }, false);
+    </script>
 </body>
 </html>
