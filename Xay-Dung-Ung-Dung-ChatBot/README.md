@@ -631,3 +631,311 @@ như sau
 
 Như vậy là chúng ta đã hoàn thành xong bước này tiếp đến chúng ta sẽ xây dựng
 mã nguồn `Javascript` để gửi dữ liệu lên cổng này để có dữ liệu trả về.
+
+## Xây dựng mã gửi dữ liệu lên và xử lý dữ liệu
+
+Ở phần trên chúng ta đã xây dựng xong cổng tiếp nhận dữ liệu bước này chúng
+ta sẽ xây dựng các phương thức để tiến hành gửi dữ liệu lên Chatbot, trong
+`Javascript` có hàm [`fetch`](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch)
+chúng ta sẽ sử dụng hàm này để tiến hành gửi dữ liệu lên Chatbot. Chúng ta
+có hai cách để đưa dữ liệu 
+
+1. Đưa vào theo biến `form-data` với header của nó là `'Content-Type': 'application/x-www-form-urlencoded'`
+2. Đưa vào theo kiểu `JSON` với header của nó `'Content-Type': 'application/json'`
+
+Để đơn giản chúng ta sẽ chọn cách đưa lên bằng `JSON` với bằng hàm `sendToChatBot`
+nội dung mã như sau:
+
+```javascript
+function sendToChatBot(url, message, callback) {
+    callback = callback || function(obj) { console.log(obj); };
+    fetch(url, {
+        method: "post",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            text:message /* Dữ liệu sẽ được đưa vào JSON ở đây JSON.stringify sẽ đưa về thành chuỗi */
+        })
+    }).then(function(resp) {
+        if (resp.status === 200) {
+            return resp.json();
+        } else {
+            console.log("Status: " + resp.status);
+            return Promise.reject("server");
+        }
+    }).then(function(obj) {
+        callback(obj);
+    }).catch(function(err) {
+        callback({
+            "error": "Có lỗi trong quá trình gửi dữ liệu"
+        })
+    });
+}
+
+```
+
+Chúng ta định nghĩa hàm `sendToChatBot(url, message, callback)` với 3 tham
+trị `url`, `message`, `callback` trong đó
+
+- `url` là địa chỉ của cổng chúng ta muốn gửi dữ liệu tới là kiểu chuỗi (`string`)
+- `message` là nội dung tin nhắn của người dùng gửi đi dữ liệu kiểu chuỗi (`string`)
+- `callback` là một hàm sẽ được gọi sau khi có kết quả trả về của hàm kiểu
+là một hàm với tham số là `obj` là một đối tượng JSON chúng ta đã quy định
+ở phần xây dựng cổng tiếp nhận dữ liệu
+
+Bây giờ chúng ta sẽ đưa nội dung của hàm định nghĩa này vào tập tin `chatbot.html`
+và viết thêm phần xử lý khi đó chúng ta sẽ có đoạn mã như sau
+
+```HTML
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Simple Chatbot</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+* {
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    outline:none;
+}
+*:before,*:after{
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+}
+::-webkit-scrollbar{
+    width:2px;
+    height:2px;
+}
+::-webkit-scrollbar-track{
+    -webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius:1px;
+}
+::-webkit-scrollbar-thumb{
+    border-radius:1px;
+    -webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.5);
+}
+body {
+    background-color:#f1f1f1;
+    font-family:arial,sans-serif;
+}
+h1, #wrapper {
+    max-width:90%;
+    width:500px;
+    margin:0 auto;
+}
+h1 {
+    margin-top:20px;
+    margin-bottom:20px;
+}
+#wrapper {
+    background-color: #fff;
+    box-shadow: 0 5px 10px 0 rgb(0 0 0 / 10%);
+    -moz-box-shadow: 0 5px 10px 0 rgba(0,0,0,.1);
+    -webkit-box-shadow: 0 5px 10px 0 rgb(0 0 0 / 10%);
+    -o-box-shadow: 0 5px 10px 0 rgba(0,0,0,.1);
+    -ms-box-shadow: 0 5px 10px 0 rgba(0,0,0,.1);
+    border-radius:4px;
+}
+#conversation {
+    max-height:250px;
+    min-height:250px;
+    padding:15px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.item {
+    margin-bottom: 10px;
+    display: flex;
+}
+.me {
+    justify-content: end;
+}
+.item p {
+    padding: 8px;
+    background-color: #eee;
+    border-radius: 5px;
+    max-width: 80%;
+    box-shadow: 0 1px 0 0 rgba(0,0,0,0.18);
+    font-family:arial,sans-serif;
+}
+.me p {
+    background-color:#e5efff;
+    box-shadow: 0 1px 0 0 #c8deff
+}
+.flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+.chat {
+    background-color: #eee;
+    border: none;
+    border-radius: 0 0 4px 4px;
+}
+input, button {
+    background-color: #eee;
+    padding: 6px 12px;
+    font-size: 14px;
+    color: #555;
+    border: none;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+    font-family:arial,sans-serif;
+}
+input {
+    width: 80%;
+}
+button {
+    border-radius: 0 0 4px 0;
+    background-color: #337ab7;
+    width: 20%;
+    cursor: pointer;
+    border:none;
+    color:#fff;
+}
+</style>
+</head>
+<body>
+    <h1>Simple Chatbot</h1>
+    <div id="wrapper">
+        <div id="conversation">
+            <div class="item">
+                <p>Chúng ta có nên chống lại với người ngu hay không ?</p>
+            </div>
+            <div class="item me">
+                <p>Theo Albert Einstein thì Không thể chống lại những người ngu vì chúng quá đông.</p>
+            </div>
+        </div>
+        <form action="" method="post" onsubmit="return false;">
+            <p class="flex chat">
+                <input type="text" name="message" value="" placeholder="Aa" />
+                <button type="submit">Gửi</button>
+            </p>
+        </form>
+    </div>
+    <script>
+    /* Hàm gửi dữ liệu tin nhắn lên chatbot */
+    function sendToChatBot(url, message, callback) {
+        callback = callback || function(obj) { console.log(obj); };
+        fetch(url, {
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                text:message /* Dữ liệu sẽ được đưa vào JSON ở đây JSON.stringify sẽ đưa về thành chuỗi */
+            })
+        }).then(function(resp) {
+            if (resp.status === 200) {
+                return resp.json();
+            } else {
+                console.log("Status: " + resp.status);
+                return Promise.reject("server");
+            }
+        }).then(function(obj) {
+            callback(obj);
+        }).catch(function(err) {
+            callback({
+                "error": "Có lỗi trong quá trình gửi dữ liệu"
+            })
+        });
+    }
+    /* Gọi sự kiện khi trang đã tải xong */
+    document.addEventListener("DOMContentLoaded", function(e) {
+        /* Viết sự kiện nhấn nút */
+        document.querySelector('button[type="submit"]').addEventListener('click', function(e) {
+            e.preventDefault(); /* Dừng không cho submit lên */
+            /* Lấy dữ liệu người dùng nhập vào */
+            var message = document.querySelector('input[name="message"]').value.trim();
+            /* Kiểm tra xem có dữ liệu không */
+            if (message.length == 0) {
+                /* Nếu như không nhập gì thì không làm gì cả */
+                return false;
+            }
+            /* Lấy khung hội thoại */
+            var conversation = document.querySelector('#conversation');
+            /* Xóa nội dung người dùng nhập */
+            document.querySelector('input[name="message"]').value = '';
+            /* Tạo một thẻ div lưu tin nhắn */
+            var item = document.createElement('div');
+            item.className = 'item me'; /* Thêm class để cho CSS nhận diện */
+            item.innerHTML = '<p>'+message+'</p>'; /* Nhúng nội dung vào */
+            /* Đưa vào khung hội thoại */
+            conversation.appendChild(item);
+            /* Cuộn xuống tới tin nhắn */
+            conversation.scrollTop = conversation.scrollHeight;
+            /* Tiến hành gửi dữ liệu lên và xử lý dữ liệu trả về */
+            sendToChatBot('{{ url_for(".chatreply") }}', message, function(obj) {
+                if (obj.error != undefined) {
+                    /* Tạo một thẻ div lưu tin nhắn */
+                    var item = document.createElement('div');
+                    item.className = 'item'; /* Thêm class để cho CSS nhận diện */
+                    item.innerHTML = '<p>Chatbot:'+obj.error+'</p>'; /* Nhúng nội dung lỗi vào */
+                    /* Đưa vào khung hội thoại */
+                    conversation.appendChild(item);
+                    /* Cuộn xuống tới tin nhắn */
+                    conversation.scrollTop = conversation.scrollHeight;
+                } else {
+                    /* Tạo một thẻ div lưu tin nhắn */
+                    var item = document.createElement('div');
+                    item.className = 'item'; /* Thêm class để cho CSS nhận diện */
+                    item.innerHTML = '<p>Chatbot:'+obj.reply+'</p>'; /* Nhúng nội dung lỗi vào */
+                    /* Đưa vào khung hội thoại */
+                    conversation.appendChild(item);
+                    /* Cuộn xuống tới tin nhắn */
+                    conversation.scrollTop = conversation.scrollHeight;
+                }
+            });
+            return false; /* return false dừng không cho submit lên và ngược lại */
+        }, false);
+    }, false);
+    </script>
+</body>
+</html>
+
+```
+
+Trong thay đổi này chúng ta có một lưu ý `'{{ url_for(".chatreply") }}'`
+đây là một hàm của `Template Engine` của `Flask` nó sẽ tự động tạo đường dẫn
+nếu như hàm trong tồn tại ở đây là hàm `chatreply` chúng ta đã định nghĩa
+ở trong tập tin `chatbot.py` để biết thêm chi tiết về `Temlate Engine` của
+`Flask` chúng ta tham khảo [Templates](https://flask.palletsprojects.com/en/2.0.x/tutorial/templates/)
+
+Và đoạn mã mới được thêm cùng với hàm `sendToChatBot` như sau
+
+```javascript
+sendToChatBot('{{ url_for(".chatreply") }}', message, function(obj) {
+    if (obj.error != undefined) {
+        /* Tạo một thẻ div lưu tin nhắn */
+        var item = document.createElement('div');
+        item.className = 'item'; /* Thêm class để cho CSS nhận diện */
+        item.innerHTML = '<p>Chatbot:'+obj.error+'</p>'; /* Nhúng nội dung lỗi vào */
+        /* Đưa vào khung hội thoại */
+        conversation.appendChild(item);
+        /* Cuộn xuống tới tin nhắn */
+        conversation.scrollTop = conversation.scrollHeight;
+    } else {
+        /* Tạo một thẻ div lưu tin nhắn */
+        var item = document.createElement('div');
+        item.className = 'item'; /* Thêm class để cho CSS nhận diện */
+        item.innerHTML = '<p>Chatbot:'+obj.reply+'</p>'; /* Nhúng nội dung lỗi vào */
+        /* Đưa vào khung hội thoại */
+        conversation.appendChild(item);
+        /* Cuộn xuống tới tin nhắn */
+        conversation.scrollTop = conversation.scrollHeight;
+    }
+});
+
+```
+
+Cấu trúc xử lý như trước chỉ khác chỗ `..., function(obj) {...});` đoạn này
+chính là cái hàm `callback` với `obj` sẽ được truyền khi hàm `sendToChatBot`
+xử lý xong dữ liệu.
+
+Như vậy ở đây chúng ta đã hoàn thành một Chatbot đơn giản để có thể đưa Chatbot
+này vào ứng dụng thực tế có trí tuệ nhân tạo thì chúng ta sẽ bắt đầu triển
+khai các đoạn mã vào phần thân của hàm `chatreply` trong tập tin `chatbot.py`
+tiếp theo chúng ta sẽ bắt đầu xử lý dữ liệu chuỗi (`string`) để chuyển đổi
+đưa vào máy học và đưa ra kết quả theo như mong muốn của người dùng.

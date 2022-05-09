@@ -130,6 +130,30 @@ button {
         </form>
     </div>
     <script>
+    /* Hàm gửi dữ liệu tin nhắn lên chatbot */
+    function sendToChatBot(url, message, callback) {
+        callback = callback || function(obj) { console.log(obj); };
+        fetch(url, {
+            method: "post",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                text:message /* Dữ liệu sẽ được đưa vào JSON ở đây JSON.stringify sẽ đưa về thành chuỗi */
+            })
+        }).then(function(resp) {
+            if (resp.status === 200) {
+                return resp.json();
+            } else {
+                console.log("Status: " + resp.status);
+                return Promise.reject("server");
+            }
+        }).then(function(obj) {
+            callback(obj);
+        }).catch(function(err) {
+            callback({
+                "error": "Có lỗi trong quá trình gửi dữ liệu"
+            })
+        });
+    }
     /* Gọi sự kiện khi trang đã tải xong */
     document.addEventListener("DOMContentLoaded", function(e) {
         /* Viết sự kiện nhấn nút */
@@ -154,16 +178,28 @@ button {
             conversation.appendChild(item);
             /* Cuộn xuống tới tin nhắn */
             conversation.scrollTop = conversation.scrollHeight;
-            /* Tạo một cái tự trả lời lại */
-            
-            /* Tạo một thẻ div lưu tin nhắn */
-            var item = document.createElement('div');
-            item.className = 'item'; /* Thêm class để cho CSS nhận diện */
-            item.innerHTML = '<p>Chatbot:'+message+'</p>'; /* Nhúng nội dung vào */
-            /* Đưa vào khung hội thoại */
-            conversation.appendChild(item);
-            /* Cuộn xuống tới tin nhắn */
-            conversation.scrollTop = conversation.scrollHeight;
+            /* Tiến hành gửi dữ liệu lên và xử lý dữ liệu trả về */
+            sendToChatBot('{{ url_for(".chatreply") }}', message, function(obj) {
+                if (obj.error != undefined) {
+                    /* Tạo một thẻ div lưu tin nhắn */
+                    var item = document.createElement('div');
+                    item.className = 'item'; /* Thêm class để cho CSS nhận diện */
+                    item.innerHTML = '<p>Chatbot:'+obj.error+'</p>'; /* Nhúng nội dung lỗi vào */
+                    /* Đưa vào khung hội thoại */
+                    conversation.appendChild(item);
+                    /* Cuộn xuống tới tin nhắn */
+                    conversation.scrollTop = conversation.scrollHeight;
+                } else {
+                    /* Tạo một thẻ div lưu tin nhắn */
+                    var item = document.createElement('div');
+                    item.className = 'item'; /* Thêm class để cho CSS nhận diện */
+                    item.innerHTML = '<p>Chatbot:'+obj.reply+'</p>'; /* Nhúng nội dung lỗi vào */
+                    /* Đưa vào khung hội thoại */
+                    conversation.appendChild(item);
+                    /* Cuộn xuống tới tin nhắn */
+                    conversation.scrollTop = conversation.scrollHeight;
+                }
+            });
             return false; /* return false dừng không cho submit lên và ngược lại */
         }, false);
     }, false);
