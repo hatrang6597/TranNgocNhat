@@ -182,3 +182,156 @@ Simple Chatbot
 Như vậy chúng ta đã hoàn thành bước cơ bản đầu tiên của công việc tạo một
 nền tảng Chatbot của chúng ta. Chúng ta sẽ đi tới bước xây dựng giao diện
 đơn giản cho Chatbot của chúng ta.
+
+## Xây dựng giao diện Chatbot
+
+Như vậy chúng ta đã xây dựng xong được nền tảng bước này chúng ta sẽ xây
+dựng một giao diện cơ bản cho Chatbot nếu như chưa rành nhiều về `HTML` và
+`CSS` bạn cứ viết theo như bản mẫu là được còn hiểu sâu nó chúng ta sẽ tìm
+hiểu ở trang [HTML Tutorial](https://www.w3schools.com/html/default.asp)
+và [CSS Tutorial](https://www.w3schools.com/css/default.asp) để tìm hiểu
+thêm chi tiết
+
+Chúng ta sẽ bắt đầu sửa tập tin `chatbot.html` như sau
+
+```HTML
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Simple Chatbot</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+* {
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    outline:none;
+}
+*:before,*:after{
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+}
+::-webkit-scrollbar{
+    width:2px;
+    height:2px;
+}
+::-webkit-scrollbar-track{
+    -webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius:1px;
+}
+::-webkit-scrollbar-thumb{
+    border-radius:1px;
+    -webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.5);
+}
+body {
+    background-color:#f1f1f1;
+    font-family:arial,sans-serif;
+}
+h1, #wrapper {
+    max-width:90%;
+    width:500px;
+    margin:0 auto;
+}
+h1 {
+    margin-top:20px;
+    margin-bottom:20px;
+}
+#wrapper {
+    background-color: #fff;
+    box-shadow: 0 5px 10px 0 rgb(0 0 0 / 10%);
+    -moz-box-shadow: 0 5px 10px 0 rgba(0,0,0,.1);
+    -webkit-box-shadow: 0 5px 10px 0 rgb(0 0 0 / 10%);
+    -o-box-shadow: 0 5px 10px 0 rgba(0,0,0,.1);
+    -ms-box-shadow: 0 5px 10px 0 rgba(0,0,0,.1);
+    border-radius:4px;
+}
+#conversation {
+    max-height:250px;
+    min-height:250px;
+    padding:15px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.item {
+    margin-bottom: 10px;
+    display: flex;
+}
+.me {
+    justify-content: end;
+}
+.item p {
+    padding: 8px;
+    background-color: #eee;
+    border-radius: 5px;
+    max-width: 80%;
+    box-shadow: 0 1px 0 0 rgba(0,0,0,0.18);
+    font-family:arial,sans-serif;
+}
+.me p {
+    background-color:#e5efff;
+    box-shadow: 0 1px 0 0 #c8deff
+}
+.flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+.chat {
+    background-color: #eee;
+    border: none;
+    border-radius: 0 0 4px 4px;
+}
+input, button {
+    background-color: #eee;
+    padding: 6px 12px;
+    font-size: 14px;
+    color: #555;
+    border: none;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+    font-family:arial,sans-serif;
+}
+input {
+    width: 80%;
+}
+button {
+    border-radius: 0 0 4px 0;
+    background-color: #337ab7;
+    width: 20%;
+    cursor: pointer;
+    border:none;
+    color:#fff;
+}
+</style>
+</head>
+<body>
+    <h1>Simple Chatbot</h1>
+    <div id="wrapper">
+        <div id="conversation">
+            <div class="item">
+                <p>Chúng ta có nên chống lại với người ngu hay không ?</p>
+            </div>
+            <div class="item me">
+                <p>Theo Albert Einstein thì Không thể chống lại những người ngu vì chúng quá đông.</p>
+            </div>
+        </div>
+        <form action="" method="post" onsubmit="return false;">
+            <p class="flex chat">
+                <input type="text" name="message" value="" placeholder="Aa" />
+                <button type="submit">Gửi</button>
+            </p>
+        </form>
+    </div>
+</body>
+</html>
+
+```
+
+Như vậy là chúng ta đã hoàn thành được giao diện Chatbot đơn giản bao gồm
+một ô nhập liệu cho người dùng, một nút nhấn để người dùng gửi thông tin
+lên cho Chatbot xử lý chúng ta sẽ tiếp tục xây dựng mã nguồn `Javascript`
+để lấy dữ liệu gửi lên bất đồng bộ cho Chatbot ở phần tiếp theo.
